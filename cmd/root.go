@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/zeebo/blake3"
@@ -24,6 +25,10 @@ func HashContents(contents []byte) string {
 	return output.String()
 }
 
+var (
+	cachedir string
+)
+
 func Run(cmd *cobra.Command, args []string) {
 	sourcefile := args[0]
 
@@ -36,9 +41,15 @@ func Run(cmd *cobra.Command, args []string) {
 	hash := HashContents(contents)
 
 	// get filenames and directories
-	// tdir := path.Join(os.TempDir(), "/cgscript")
-	tdir := path.Join("./cache")
-	executable := path.Join(tdir, hash+".exe")
+	cachedir = strings.ReplaceAll(cachedir, "\\", "/")
+	executable := path.Join(cachedir, hash+".exe")
+
+	// create cache dir
+	_, err = os.Stat(cachedir)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(cachedir, 0666)
+		panic(err)
+	}
 
 	// check for the executable in cgscript dir
 	_, err = os.Stat(executable)
@@ -57,7 +68,8 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 
 	// run the script
-	script := exec.Command("sh", "-c", executable)
+	// script := exec.Command("sh", "-c", executable)
+	script := exec.Command(executable)
 	script.Stderr = os.Stderr
 	script.Stdout = os.Stdout
 	script.Stdin = os.Stdin
@@ -80,4 +92,5 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Flags().StringVar(&cachedir, "cache", path.Join(os.TempDir(), "cgscript"), "--cache <CACHE DIR>")
 }

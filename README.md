@@ -14,7 +14,5 @@ This line runs contents of build.go from cache or compiles into the cache dir th
 
 ## Features
 
-- [ ] Change the cache dir
-- [ ] Changing the run command
-- [ ] Changing the compile command
+- [x] Change the cache dir
 - [ ] Clear cache
