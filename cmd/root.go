@@ -42,8 +42,17 @@ func Run(cmd *cobra.Command, args []string) {
 	// check for the executable in cgscript dir
 	_, err = os.Stat(executable)
 	if os.IsNotExist(err) {
-		// compile go script
-		panic("Compilation not implemented")
+		// compiling go executable
+
+		compile := exec.Command("go", "build", "-o", executable, sourcefile)
+		compile.Stderr = os.Stderr
+		compile.Stdout = os.Stdout
+		compile.Stdin = os.Stdin
+
+		err = compile.Run()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// run the script

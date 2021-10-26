@@ -1,8 +1,8 @@
 run:
-	go run . ./testfiles/run.go
+	go run . ./cache/run.go
 
 build:
-	go build -ldflags "-s -w" .
+	go build .
 
 install: 
 	go install .
