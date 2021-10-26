@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/base32"
-	"fmt"
 	"os"
 	"os/exec"
 	"path"
@@ -56,7 +55,7 @@ func Run(cmd *cobra.Command, args []string) {
 	if os.IsNotExist(err) {
 		// compiling go executable
 
-		compile := exec.Command("sh", "-c", fmt.Sprintf("go build -o %s %s", executable, sourcefile))
+		compile := exec.Command("go", "build", "-o", executable, sourcefile)
 		compile.Stderr = os.Stderr
 		compile.Stdout = os.Stdout
 		compile.Stdin = os.Stdin
@@ -68,7 +67,6 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 
 	// run the script
-	// script := exec.Command("sh", "-c", executable)
 	script := exec.Command(executable)
 	script.Stderr = os.Stderr
 	script.Stdout = os.Stdout
